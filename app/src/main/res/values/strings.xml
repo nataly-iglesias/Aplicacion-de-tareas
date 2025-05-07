@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Aplicacion de tareas</string>
+    <string name="agregar_tarea">Agregar tarea</string>
+
+    <string-array name="category_array">
+        <item>Seleccionar categoría</item>
+        <item>Personal</item>
+        <item>Trabajo</item>
+        <item>Escuela</item>
+    </string-array>
+
+    <string-array name="recurrence_array">
+        <item>Seleccionar frecuencia</item>
+        <item>Una vez</item>
+        <item>Diaria</item>
+        <item>Semanal</item>
+        <item>Mensual</item>
+    </string-array>
+
+    <string-array name="tiempos_recordatorio">
+        <item>1 hora antes</item>
+        <item>6 horas antes</item>
+        <item>12 horas antes</item>
+        <item>1 día antes</item>
+        <item>2 días antes</item>
+        <item>1 semana antes</item>
+    </string-array>
+
+</resources>
