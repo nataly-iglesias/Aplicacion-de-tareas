@@ -2,6 +2,8 @@ package com.equipouno.aplicaciondetareas
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,11 +20,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.first
 import android.util.Log
+import android.app.AlarmManager
+import android.provider.Settings
+
+
 
 // Importaciones para la animación de confetti
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.Toast
 import java.util.concurrent.TimeUnit
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.Party
@@ -75,6 +82,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            try {
+                val canSchedule = alarmManager.canScheduleExactAlarms()
+                if (!canSchedule) {
+                    Toast.makeText(this, "La app no puede programar alarmas exactas", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                    startActivity(intent)
+                    return
+                }
+            } catch (e: SecurityException) {
+                Log.e("AlarmPermission", "Error al verificar permiso de alarmas exactas", e)
+                Toast.makeText(this, "Error al verificar permiso de alarmas", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
         // Inicializa las vistas
         tabLayout = findViewById(R.id.tab_layout)
         viewPager = findViewById(R.id.view_pager)
@@ -111,7 +135,9 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_home -> true
                 R.id.nav_notifications -> {
+
                     startActivity(Intent(this, NotificationsActivity::class.java))
+
                     true
                 }
                 R.id.nav_reports -> {
