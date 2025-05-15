@@ -1,5 +1,7 @@
 package com.equipouno.aplicaciondetareas
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -19,10 +21,19 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.first
 import android.util.Log
 
+// Importaciones para la vibración
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.content.Context
+import android.graphics.drawable.AnimationDrawable
+import android.media.MediaPlayer
+
 // Importaciones para la animación de confetti
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import java.util.concurrent.TimeUnit
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.Party
@@ -75,6 +86,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Obtiene el nombre del usuario y lo muestra en el saludo
+        val tvSaludo = findViewById<TextView>(R.id.tv_saludo)
+
+        val prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val nombre = prefs.getString("nombre_usuario", "")
+        if (!nombre.isNullOrEmpty()) {
+            tvSaludo.text = "Hola $nombre ⭐!"
+        } else {
+            tvSaludo.text = "Hola ⭐!"
+        }
+
         // Inicializa las vistas
         tabLayout = findViewById(R.id.tab_layout)
         viewPager = findViewById(R.id.view_pager)
@@ -124,6 +146,62 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> false
             }
+        }
+
+        // Inicia la animación del gatito
+        val catView = findViewById<ImageView>(R.id.catView)
+        val catAnimation = catView.drawable as AnimationDrawable
+        catAnimation.start()
+
+        // Esperar a que se dibuje el layout para obtener el ancho
+        catView.post {
+            val parentWidth = (catView.parent as View).width
+            val catWidth = catView.width
+
+            val startX = 0f
+            val endX = parentWidth - catWidth - 150f // 150 para no tapar el botón "más"
+
+            val animator = ObjectAnimator.ofFloat(catView, "translationX", startX, endX).apply {
+                duration = 6000
+                repeatMode = ValueAnimator.REVERSE
+                repeatCount = ValueAnimator.INFINITE
+
+                addUpdateListener { animation ->
+                    val currentPosition = animation.animatedValue as Float
+                    if (currentPosition == endX) {
+                        catView.setImageResource(R.drawable.cat_walk_reverse) // Cambia la imagen
+                        val catReverseAnimation = catView.drawable as AnimationDrawable
+                        catReverseAnimation.start()
+                    } else if (currentPosition == startX) {
+                        catView.setImageResource(R.drawable.cat_walk) // Cambia la imagen
+                        val catWalkAnimation = catView.drawable as AnimationDrawable
+                        catWalkAnimation.start()
+                    }
+                }
+            }
+            animator.start()
+        }
+
+        // Reproducir sonido al hacer clic en el gatito
+        catView.setOnClickListener {
+            val mediaPlayer = MediaPlayer.create(this, R.raw.meow)
+            mediaPlayer.start()
+            mediaPlayer.setOnCompletionListener {
+                it.release()
+            }
+
+            val catView = findViewById<ImageView>(R.id.catView)
+            catView.animate()
+                .scaleX(1.3f)
+                .scaleY(1.3f)
+                .setDuration(300)
+                .withEndAction {
+                    catView.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(300)
+                        .start()
+                }
         }
     }
 
@@ -197,7 +275,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
             // Refresca las pestañas
             pagerAdapter.refreshFragments(pendingTasks, completedTasks)
         }
@@ -237,9 +314,10 @@ class MainActivity : AppCompatActivity() {
                 db.taskDao().delete(task)
             }
         }
-
+        android.widget.Toast.makeText(this, "¡Tarea eliminada 🗑️!", android.widget.Toast.LENGTH_SHORT).show()
         // Actualiza el adaptador para reflejar los cambios
         pagerAdapter.refreshFragments(pendingTasks, completedTasks)
+        vibrate()
     }
 
     //Función para mostrar el efecto de confetti
@@ -263,6 +341,14 @@ class MainActivity : AppCompatActivity() {
             konfettiView.visibility = View.GONE
         }, 3000)
     }
+
+    // Función para vibrar el dispositivo
+    fun vibrate(){
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrator.vibrate(200)
+        }
+    }
 }
-
-

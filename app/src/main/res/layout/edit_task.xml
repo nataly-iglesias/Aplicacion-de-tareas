@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="20dp">
 
     <LinearLayout
@@ -11,41 +12,90 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:text="Editar tarea"
             android:textSize="24sp"
-            android:layout_marginBottom="20dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp"/>
 
-        <!-- Título -->
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Título" />
+            android:layout_height="wrap_content"
+            android:text="* Indica que el campo es obligatorio"
+            android:textColor="@color/red"
+            android:textSize="13sp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Título -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:paddingVertical="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Título"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="*"
+                android:textColor="@color/red"/>
+        </LinearLayout>
+
         <EditText
             android:id="@+id/et_task_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:hint="Ingrese un título"
+            android:layout_marginBottom="16dp" />
 
         <!-- Descripción -->
+
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Descripción" />
+
         <EditText
             android:id="@+id/et_task_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:minLines="2"
-            android:layout_marginTop="8dp" />
+            android:hint="Ingrese una descripción"
+            android:layout_marginBottom="16dp" />
 
-        <!-- Fecha límite-->
-        <TextView
+        <!-- Fecha límite -->
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Fecha límite"
-            android:layout_marginTop="8dp" />
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:paddingVertical="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha límite" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="*"
+                android:textColor="@color/red"/>
+        </LinearLayout>
+
+        <!--
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end">
+
         <EditText
             android:id="@+id/et_deadline"
             android:layout_width="match_parent"
@@ -53,54 +103,100 @@
             android:inputType="none"
             android:hint="DD/MM/YYYY"
             android:drawableEnd="@drawable/calendar"
-            android:layout_marginTop="8dp" />
+            android:drawablePadding="10dp"
+            android:layout_marginBottom="16dp" />
+    </LinearLayout>
+    -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:id="@+id/iv_calendar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/calendar"
+                android:contentDescription="Seleccionar fecha"
+                android:padding="8dp"/>
+
+            <EditText
+                android:id="@+id/et_deadline"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="DD/MM/YYYY"
+                android:inputType="date"/>
+        </LinearLayout>
+
 
         <!-- Prioridad -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Prioridad"
-            android:layout_marginTop="8dp" />
-        <Spinner
-            android:id="@+id/spinner_priority"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-
-        <!-- Categoría o etiqueta-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Categoría o etiqueta"
-            android:layout_marginTop="8dp" />
-        <Spinner
-            android:id="@+id/spinner_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-
-        <!--Frecuencia-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Frecuencia"
-            android:layout_marginTop="8dp" />
-        <Spinner
-            android:id="@+id/spinner_recurrence"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"/>
-
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:gravity="start|center_vertical"
+            android:paddingVertical="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Prioridad" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="*"
+                android:textColor="@color/red"/>
+        </LinearLayout>
+
+        <Spinner
+            android:id="@+id/spinner_priority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Categoría o etiqueta -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Categoría o etiqueta"
+            android:paddingVertical="8dp"/>
+
+        <Spinner
+            android:id="@+id/spinner_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Frecuencia -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Frecuencia"
+            android:paddingVertical="8dp"/>
+
+        <Spinner
+            android:id="@+id/spinner_recurrence"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Botones -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="end">
 
             <Button
                 android:id="@+id/btn_cancel"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:icon="@drawable/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cancelar" />
@@ -108,6 +204,7 @@
             <Button
                 android:id="@+id/btn_save"
                 style="@style/Widget.MaterialComponents.Button"
+                app:icon="@drawable/complete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Guardar"

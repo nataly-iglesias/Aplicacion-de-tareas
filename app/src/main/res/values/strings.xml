@@ -2,13 +2,6 @@
     <string name="app_name">Aplicacion de tareas</string>
     <string name="agregar_tarea">Agregar tarea</string>
 
-    <string-array name="category_array">
-        <item>Seleccionar categoría</item>
-        <item>Personal</item>
-        <item>Trabajo</item>
-        <item>Escuela</item>
-    </string-array>
-
     <string-array name="recurrence_array">
         <item>Seleccionar frecuencia</item>
         <item>Una vez</item>

@@ -9,6 +9,16 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AlertDialog
 
+// Importaciones para la vibración
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.content.Context
+
+// Importaciones para el sonido
+import android.media.MediaPlayer
+import android.widget.ArrayAdapter
+import org.json.JSONArray
+
 class EditTaskActivity : AppCompatActivity() {
 
     private lateinit var taskDao: TaskDao
@@ -38,16 +48,33 @@ class EditTaskActivity : AppCompatActivity() {
         val taskCategory = intent.getStringExtra("task_category") ?: ""
         val taskRecurrence = intent.getStringExtra("task_recurrence") ?: ""
 
-        val priorityOptions = listOf("Alta", "Media", "Baja")
-        val categoryOptions = listOf("Trabajo", "Personal", "Escuela")
-        val recurrenceOptions = listOf("Ninguna", "Diaria", "Semanal", "Mensual")
+        val priorityOptions = listOf("\uD83D\uDD34 Alta", "\uD83D\uDFE1 Media", "\uD83D\uDFE2 Baja")
+        val recurrenceOptions = listOf("Una vez", "Diaria", "Semanal", "Mensual")
 
+        //Spinner de prioridad
         prioritySpinner.adapter = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, priorityOptions).also {
             it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
-        categorySpinner.adapter = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, categoryOptions).also {
+        //Spinner de categoría
+        // Cargar categorías desde SharedPreferences
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val categoriesJson = prefs.getString("categorias", "[]")
+        val categoriesList = JSONArray(categoriesJson).let { jsonArray ->
+            mutableListOf<String>().apply {
+                for (i in 0 until jsonArray.length()) {
+                    add(jsonArray.getString(i))
+                }
+            }
+        }
+        // Si no se cargan categorías, usar categorías predeterminadas
+        if (categoriesList.isEmpty()) {
+            categoriesList.addAll(listOf("Selecionar categoría", "🧘 Personal", "💻 Trabajo", "🎓 Escuela"))
+        }
+        categorySpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categoriesList).also {
             it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
+
+        //Spinner de recurrencia
         recurrenceSpinner.adapter = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, recurrenceOptions).also {
             it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
@@ -72,9 +99,11 @@ class EditTaskActivity : AppCompatActivity() {
                 recurrence = recurrenceSpinner.selectedItem.toString(),
                 isCompleted = false // o mantenlo como estaba originalmente
             )
-
             lifecycleScope.launch {
                 taskDao.update(updatedTask)
+                android.widget.Toast.makeText(this@EditTaskActivity, "¡Tarea actualizada \uD83E\uDE84!", android.widget.Toast.LENGTH_SHORT).show()
+                vibrate()
+                playCompleteTaskSound()
                 finish()
             }
         }
@@ -104,6 +133,22 @@ class EditTaskActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // Función para vibrar el dispositivo
+    fun vibrate(){
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrator.vibrate(200)
+        }
+    }
+
+    //Función para reproducir sonido al completar una tarea
+    private fun playCompleteTaskSound() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.complete_task_sound)
+        mediaPlayer.start()
     }
 }
 

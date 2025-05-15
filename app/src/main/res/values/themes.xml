@@ -3,14 +3,15 @@
     <style name="Base.Theme.AplicacionDeTareas" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/royalPurple</item>
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
+   <!-- Estilo DatePickerDialog -->
     <style name="CustomDatePickerDialog" parent="Theme.Material3.DayNight.Dialog">
         <item name="colorPrimary">@color/royalPurple</item>
         <item name="colorSecondary">@color/royalPurple</item>
         <item name="colorOnPrimary">@color/royalPurple</item>
         <item name="android:textColorPrimary">@color/royalPurple</item>
     </style>
-
     <style name="Theme.AplicacionDeTareas" parent="Base.Theme.AplicacionDeTareas" />
 </resources>

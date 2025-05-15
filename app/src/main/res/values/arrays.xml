@@ -3,8 +3,8 @@
 <resources>
     <string-array name="priority_array">
         <item>Seleccionar prioridad</item>
-        <item>Alta</item>
-        <item>Media</item>
-        <item>Baja</item>
+        <item>🔴 Alta</item>
+        <item>🟡 Media</item>
+        <item>🟢 Baja</item>
     </string-array>
 </resources>

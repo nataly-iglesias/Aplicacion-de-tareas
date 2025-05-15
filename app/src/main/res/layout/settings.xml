@@ -1,110 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollViewSettings"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="20dp">
-
-    <LinearLayout
-        android:id="@+id/layoutSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <!-- Título -->
-        <TextView
-            android:text="Configuración"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <!-- Nombre del usuario -->
-        <TextView
-            android:text="Nombre"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:id="@+id/layoutSettings"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:gravity="end">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <Button
-                android:id="@+id/btn_editarNombre"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            <!-- Título -->
+            <TextView
+                android:text="Configuración"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <!-- Nombre del usuario -->
+            <TextView
+                android:text="Perfil de usuario"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="24dp">
+
+                <EditText
+                    android:id="@+id/et_nameUser"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Nombre"
+                    android:inputType="textPersonName" />
+
+                <Button
+                    android:id="@+id/btn_save_name"
+                    style="@style/Widget.MaterialComponents.Button"
+                    app:icon="@drawable/complete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Guardar"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+
+            <!-- Categorías personalizadas -->
+            <TextView
+                android:text="Gestión de categorías"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Agregar categoría"
+                android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Editar" />
+                android:layout_marginBottom="8dp"/>
 
-            <Button
-                android:id="@+id/btn_agregarNombre"
-                style="@style/Widget.MaterialComponents.Button"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/et_newCategory"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Nueva categoría"
+                    android:inputType="text"
+                    android:minHeight="48dp"
+                    android:minWidth="48dp"/>
+
+                <Button
+                    android:id="@+id/btn_add_category"
+                    style="@style/Widget.MaterialComponents.Button"
+                    app:icon="@drawable/add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Agregar"
+                    android:layout_marginStart="12dp" />
+            </LinearLayout>
+
+            <TextView
+                android:text="Categorías existentes"
+                android:textSize="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Agregar"
-                android:layout_marginStart="12dp" />
-        </LinearLayout>
+                android:layout_marginBottom="8dp" />
 
-        <!-- Categorías personalizadas -->
-        <TextView
-            android:text="Personalizar categorías"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:gravity="end">
+            <ListView
+                android:id="@+id/lv_categories"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:divider="@android:color/darker_gray"
+                android:dividerHeight="1dp"
+                android:layout_marginBottom="24dp" />
 
-            <Button
-                android:id="@+id/btn_editarCategoria"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Editar" />
-
-            <Button
-                android:id="@+id/btn_agregarCategoria"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Agregar"
-                android:layout_marginStart="12dp" />
-        </LinearLayout>
-
-
-        <!-- Notificaciones -->
-        <TextView
+            <!-- Notificaciones -->
+            <TextView
             android:text="Notificaciones"
             android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <Switch
-            android:id="@+id/switchNotificaciones"
-            android:text="Activar notificaciones"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginBottom="12dp" />
 
-        <TextView
-            android:text="Recordar con anticipación:"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
-        <Spinner
-            android:id="@+id/spinnerTiempoRecordatorio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:entries="@array/tiempos_recordatorio" />
-    </LinearLayout>
-</ScrollView>
+            <Switch
+                android:id="@+id/switchNotificaciones"
+                android:text="Activar notificaciones"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:minWidth="48dp"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:text="Recordar con anticipación:"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/spinnerTiempoRecordatorio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:minHeight="48dp"
+                android:minWidth="48dp"
+                android:entries="@array/tiempos_recordatorio" />
+</LinearLayout>
+
+    <!-- Barra de navegación inferior -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/purple"
+        app:menu="@menu/bottom_nav_menu" />
+</LinearLayout>

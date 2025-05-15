@@ -58,7 +58,7 @@ class TaskAdapter(
                     val messages = listOf(
                         "¡Buen trabajo! Otra tarea terminada ✅",
                         "¡Vas increíble! Nueva tarea completada 💪",
-                        "¡Excelente! Tarea completada ⭐",
+                        "¡Excelente! Tarea completada \uD83C\uDF1F",
                         "¡Felicidades! Completaste una tarea 🎉"
                     )
                     val randomMessage = messages.random() // Selecciona un mensaje al azar
