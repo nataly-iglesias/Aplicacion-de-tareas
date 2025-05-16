@@ -1,5 +1,7 @@
 package com.equipouno.aplicaciondetareas
 
+import CompletedTasksFragment
+import PendingTasksFragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -19,10 +21,21 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.first
 import android.util.Log
 
+//Importación de búsqueda
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.LinearLayoutManager
+
+
+
+
 // Importaciones para la animación de confetti
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.AdapterView
+import android.widget.LinearLayout
+import android.widget.Spinner
+import androidx.recyclerview.widget.RecyclerView
 import java.util.concurrent.TimeUnit
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.Party
@@ -36,10 +49,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tabLayout: TabLayout
     private lateinit var pagerAdapter: TasksPagerAdapter
     lateinit var db: AppDatabase
+    private lateinit var searchRecyclerView: RecyclerView
+    private lateinit var searchAdapter: TaskAdapter
+    private val searchResults = mutableListOf<Task>()
+
 
     // Inicializa las listas de tareas pendientes y completadas
     val pendingTasks = mutableListOf<Task>()
     val completedTasks = mutableListOf<Task>()
+
+
 
     private val addTaskLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -70,10 +89,62 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Función para crear la actividad principal
+    // Función para crear la actividad principal y la búsqueda
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Inicializa el SearchView
+        val searchView = findViewById<SearchView>(R.id.search_view)
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // No es necesario hacer nada aqui si solo se quiere buscar en tiempo real
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val query = newText ?: ""
+
+                if (query.isNotEmpty()) {
+                    val filteredPending = pendingTasks.filter { it.title.contains(query, ignoreCase = true) }
+                    val filteredCompleted = completedTasks.filter { it.title.contains(query, ignoreCase = true) }
+
+                    searchResults.clear()
+                    searchResults.addAll(filteredPending + filteredCompleted)
+                    searchAdapter.notifyDataSetChanged()
+
+                    // Mostrar solo los resultados de búsqueda
+                    searchRecyclerView.visibility = View.VISIBLE
+                    viewPager.visibility = View.GONE
+                    tabLayout.visibility = View.GONE
+                } else {
+                    // Restaurar la vista normal
+                    searchRecyclerView.visibility = View.GONE
+                    viewPager.visibility = View.VISIBLE
+                    tabLayout.visibility = View.VISIBLE
+                }
+
+                return true
+            }
+
+        })
+
+        //Inicializa RecyclerView
+        searchRecyclerView = findViewById(R.id.recycler_search_results)
+        searchAdapter = TaskAdapter(searchResults, { task ->
+            // Aquí decides qué hacer al marcar como completado en modo búsqueda
+            if (!task.isCompleted) {
+                moveTaskCompleted(task)
+            }
+        }, { task ->
+            deleteTask(task)
+        }, showConfetti = true)
+
+        searchRecyclerView.layoutManager = LinearLayoutManager(this)
+        searchRecyclerView.adapter = searchAdapter
+
 
         // Inicializa las vistas
         tabLayout = findViewById(R.id.tab_layout)
@@ -125,6 +196,40 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
+        //Clasificación por Prioridad --> Flitro
+
+        val prioritySpinner = findViewById<Spinner>(R.id.spinner_priority)
+        val filterContainer = findViewById<LinearLayout>(R.id.filter_container)
+        val spinnerPriority = findViewById<Spinner>(R.id.spinner_priority)
+
+        filterContainer.setOnClickListener {
+            spinnerPriority.performClick()
+        }
+
+        prioritySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selected = parent.getItemAtPosition(position).toString()
+                val filteredPending = if (selected == "Todas") {
+                    pendingTasks
+                } else {
+                    pendingTasks.filter { it.priority.equals(selected, ignoreCase = true) }
+                }
+
+                val filteredCompleted = if (selected == "Todas") {
+                    completedTasks
+                } else {
+                    completedTasks.filter { it.priority.equals(selected, ignoreCase = true) }
+                }
+
+                // Actualiza fragmentos
+                pagerAdapter.refreshFragments(filteredPending, filteredCompleted)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+
     }
 
     // Carga las tareas pendientes desde la base de datos
@@ -242,6 +347,23 @@ class MainActivity : AppCompatActivity() {
         pagerAdapter.refreshFragments(pendingTasks, completedTasks)
     }
 
+    // Función que filtra las tareas por título y actualiza las listas en el adaptador
+    private fun filterTasks(query: String?) {
+        val filteredPendingTasks = if (query.isNullOrEmpty()) {
+            pendingTasks
+        } else {
+            pendingTasks.filter { it.title.contains(query, ignoreCase = true) }
+        }
+
+        val filteredCompletedTasks = if (query.isNullOrEmpty()) {
+            completedTasks
+        } else {
+            completedTasks.filter { it.title.contains(query, ignoreCase = true) }
+        }
+
+        pagerAdapter.updateTasks(filteredPendingTasks, filteredCompletedTasks)
+    }
+
     //Función para mostrar el efecto de confetti
     fun showConfetti() {
         val konfettiView = findViewById<nl.dionsegijn.konfetti.xml.KonfettiView>(R.id.konfettiView)
@@ -263,6 +385,8 @@ class MainActivity : AppCompatActivity() {
             konfettiView.visibility = View.GONE
         }, 3000)
     }
+
+
 }
 
 

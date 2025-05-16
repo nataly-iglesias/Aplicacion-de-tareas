@@ -26,4 +26,13 @@
         <item>1 semana antes</item>
     </string-array>
 
+    <!-- Nivel de prioridades -->
+    <string-array name="priority_options">
+        <item>Todas</item>
+        <item>Alta</item>
+        <item>Media</item>
+        <item>Baja</item>
+    </string-array>
+
+
 </resources>
