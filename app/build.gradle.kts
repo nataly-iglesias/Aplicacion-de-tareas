@@ -51,6 +51,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation ("com.google.android.material:material:1.10.0")
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
 
 
     implementation("androidx.room:room-runtime:2.6.1")
@@ -60,4 +61,8 @@ dependencies {
     //Libreria de efecto confetti
     implementation ("nl.dionsegijn:konfetti-xml:2.0.5")
     implementation ("nl.dionsegijn:konfetti-core:2.0.5")
+
+    //Libreria graficas
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 }

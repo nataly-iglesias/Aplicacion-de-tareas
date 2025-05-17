@@ -26,4 +26,11 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE deadline = :date LIMIT 1")
     fun getTaskByDeadline(date: String): Task?
+
+    @Query("SELECT * FROM tasks WHERE isCompleted = 1 AND deadline BETWEEN :startDate AND :endDate")
+    suspend fun getCompletedTasksBetweenDates(startDate: String, endDate: String): List<Task>
+
+    @Query("SELECT * FROM tasks")
+    suspend fun getAllTasksOnce(): List<Task>
+
 }
