@@ -20,6 +20,22 @@ class PendingTasksFragment : Fragment() {
     private val pendingTasks = mutableListOf<Task>()
     var onTaskDelete: ((Task) -> Unit)? = null
 
+    // Método para actualizar la lista desde el exterior
+    fun updateTaskList(tasks: List<Task>) {
+        pendingTasks.clear()
+        pendingTasks.addAll(tasks)
+        adapter.notifyDataSetChanged()
+    }
+
+    companion object {
+        fun newInstance(tasks: List<Task>, onTaskDelete: (Task) -> Unit): PendingTasksFragment {
+            val fragment = PendingTasksFragment()
+            fragment.pendingTasks.addAll(tasks) // Agrega las tareas iniciales
+            fragment.onTaskDelete = onTaskDelete
+            return fragment
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_pending_tasks, container, false)
     }
@@ -27,20 +43,12 @@ class PendingTasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById(R.id.recycler_pending)
 
-        // Adapter para la lista de tareas pendientes
+        // Inicializa el adaptador con las listas de tareas pendientes
         adapter = TaskAdapter(pendingTasks, { task ->
-            task.isCompleted = true
-            (activity as? MainActivity)?.let { main ->
-                main.lifecycleScope.launch {
-                    main.db.taskDao().update(task) // Marca la tarea como completada en la base de datos
-                }
-            }
+            (activity as? MainActivity)?.moveTaskCompleted(task)
         }, { task ->
-            onTaskDelete?.invoke(task) // Llamada a la función para eliminar tarea
-        },
-            showConfetti = true
-        )
-
+            onTaskDelete?.invoke(task)
+        }, showConfetti = true)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
 

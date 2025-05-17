@@ -8,8 +8,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class TasksPagerAdapter(
     activity: FragmentActivity,
-    private var pendingTasks: List<Task>,  // Lista de tareas pendientes
-    private var completedTasks: List<Task>,  // Lista de tareas completadas
+    private var pendingTasks: List<Task>,
+    private var completedTasks: List<Task>,
     private val onTaskDelete: (Task) -> Unit
 ) : FragmentStateAdapter(activity) {
 
@@ -18,25 +18,25 @@ class TasksPagerAdapter(
 
     override fun getItemCount(): Int = 2
 
-    // Función para crear los fragmentos de tareas pendientes y completadas
     override fun createFragment(position: Int): Fragment {
         return if (position == 0) {
-            val fragment = PendingTasksFragment()
-            pendingFragment = fragment
-            fragment.onTaskDelete = onTaskDelete
-            fragment
+            pendingFragment = PendingTasksFragment.newInstance(pendingTasks, onTaskDelete)
+            pendingFragment!!
         } else {
-            val fragment = CompletedTasksFragment()
-            completedFragment = fragment
-            fragment.onTaskDelete = onTaskDelete
-            fragment
+            completedFragment = CompletedTasksFragment.newInstance(completedTasks, onTaskDelete)
+            completedFragment!!
         }
     }
 
-    // Función para actualizar los fragmentos con las listas de tareas actualizadas
     fun refreshFragments(updatedPendingTasks: List<Task>, updatedCompletedTasks: List<Task>) {
-        pendingTasks = updatedPendingTasks
-        completedTasks = updatedCompletedTasks
+        this.pendingTasks = updatedPendingTasks
+        this.completedTasks = updatedCompletedTasks
+        pendingFragment?.updateTaskList(updatedPendingTasks)
+        completedFragment?.updateTaskList(updatedCompletedTasks)
     }
 
+    fun updateTasks(filteredPending: List<Task>, filteredCompleted: List<Task>) {
+        pendingFragment?.updateTaskList(filteredPending)
+        completedFragment?.updateTaskList(filteredCompleted)
+    }
 }
