@@ -29,11 +29,18 @@
 
         <activity android:name=".tasks.AddTaskActivity" />
         <activity android:name=".tasks.EditTaskActivity" />
-        <activity android:name=".NotificationsActivity" />
+        <activity android:name=".NotificationsActivity"
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".ReportsActivity" />
         <activity
             android:name=".SettingsActivity"
             android:windowSoftInputMode="adjustNothing" />
+
+        <receiver android:name=".tasks.TaskReminderReceiver" android:exported="true" />
+
     </application>
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
 </manifest>

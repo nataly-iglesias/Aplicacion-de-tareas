@@ -1,4 +1,5 @@
 package com.equipouno.aplicaciondetareas.tasks
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -16,8 +17,11 @@ import android.content.Context
 
 // Importaciones para el sonido
 import android.media.MediaPlayer
+import android.view.ContextThemeWrapper
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import org.json.JSONArray
+import java.util.Calendar
 
 class EditTaskActivity : AppCompatActivity() {
 
@@ -31,6 +35,7 @@ class EditTaskActivity : AppCompatActivity() {
         val titleEditText = findViewById<EditText>(R.id.et_task_title)
         val descriptionEditText = findViewById<EditText>(R.id.et_task_description)
         val deadlineEditText = findViewById<EditText>(R.id.et_deadline)
+        val ivCalendar: ImageView = findViewById(R.id.iv_calendar)
         val prioritySpinner = findViewById<Spinner>(R.id.spinner_priority)
         val categorySpinner = findViewById<Spinner>(R.id.spinner_category)
         val recurrenceSpinner = findViewById<Spinner>(R.id.spinner_recurrence)
@@ -106,6 +111,24 @@ class EditTaskActivity : AppCompatActivity() {
                 playCompleteTaskSound()
                 finish()
             }
+        }
+
+        // Configurar el DatePickerDialog al hacer clic en el ImageView
+        ivCalendar.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog = DatePickerDialog(
+                ContextThemeWrapper(this, R.style.CustomDatePickerDialog),
+                { _, selectedYear, selectedMonth, selectedDay ->
+                    val formattedDate = String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
+                    deadlineEditText.setText(formattedDate)
+                },
+                year, month, day
+            )
+            datePickerDialog.show()
         }
 
         // Cancelar cambios

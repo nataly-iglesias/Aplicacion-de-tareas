@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +39,13 @@ import android.media.MediaPlayer
 //Importaciones para la búsqueda
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
+
+// Importaciones para las alarmas
+import android.app.AlarmManager
+import android.provider.Settings
+
+// Importaciones para las notificaciones
+import android.widget.Toast
 
 // Importaciones para la animación de confetti
 import android.os.Handler
@@ -179,6 +188,25 @@ class MainActivity : AppCompatActivity() {
         searchRecyclerView.layoutManager = LinearLayoutManager(this)
         searchRecyclerView.adapter = searchAdapter
 
+
+        // Verifica permisos de alarmas exactas
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            try {
+                val canSchedule = alarmManager.canScheduleExactAlarms()
+                if (!canSchedule) {
+                    Toast.makeText(this, "La app no puede programar alarmas exactas", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                    startActivity(intent)
+                    return
+                }
+            } catch (e: SecurityException) {
+                Log.e("AlarmPermission", "Error al verificar permiso de alarmas exactas", e)
+                Toast.makeText(this, "Error al verificar permiso de alarmas", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
         // Inicializa las vistas
         tabLayout = findViewById(R.id.tab_layout)
         viewPager = findViewById(R.id.view_pager)
@@ -264,7 +292,9 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_home -> true
                 R.id.nav_notifications -> {
+
                     startActivity(Intent(this, NotificationsActivity::class.java))
+
                     true
                 }
                 R.id.nav_reports -> {

@@ -11,6 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.json.JSONArray
 
+import android.content.SharedPreferences
+import android.widget.Switch
+import android.widget.Spinner
+
 class SettingsActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -19,6 +23,10 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var btnAddCategory: Button
     private lateinit var adapter: CategoryAdapter
     private val categories = mutableListOf<String>()
+
+    private lateinit var switchNotificaciones: Switch
+    private lateinit var spinnerTiempoRecordatorio: Spinner
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +40,8 @@ class SettingsActivity : AppCompatActivity() {
         val etUserName = findViewById<EditText>(R.id.et_nameUser)
         val btnSaveName = findViewById<Button>(R.id.btn_save_name)
 
-        // Obtener SharedPreferences
         val prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
         val savedCategoriesJson = prefs.getString("categorias", null)
         if (savedCategoriesJson != null) {
@@ -64,6 +72,10 @@ class SettingsActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
                 etNewCategory.text.clear()
 
+                // Ocultar el teclado
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(etNewCategory.windowToken, 0)
+
                 val  updatedJson = JSONArray(categories).toString()
                 prefs.edit().putString("categorias",  updatedJson).apply()
                 Toast.makeText(this, "Categoría agregada", Toast.LENGTH_SHORT).show()
@@ -73,11 +85,16 @@ class SettingsActivity : AppCompatActivity() {
         // Cargar nombre de usuario
         etUserName.setText(prefs.getString("nombre_usuario", ""))
 
+        // Guardar nombre de usuario
         btnSaveName.setOnClickListener {
             val userName = etUserName.text.toString().trim()
             if (userName.isNotEmpty()) {
                 prefs.edit().putString("nombre_usuario", userName).apply()
                 Toast.makeText(this, "Nombre guardado", Toast.LENGTH_SHORT).show()
+
+                // Ocultar el teclado
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(etUserName.windowToken, 0)
             } else {
                 Toast.makeText(this, "Ingresa un nombre válido", Toast.LENGTH_SHORT).show()
             }
@@ -108,5 +125,44 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+
+        //Inicializamos las vistas
+        switchNotificaciones = findViewById(R.id.switchNotificaciones)
+        spinnerTiempoRecordatorio = findViewById(R.id.spinnerTiempoRecordatorio)
+
+        val notificationsEnabled = sharedPreferences.getBoolean("notificationsEnabled", false) // Si las notificaciones están habilitadas
+        val reminderTime = sharedPreferences.getString("reminderTime", "15 minutos") // Tiempo de recordatorio guardado (por defecto "15 minutos")
+
+
+        switchNotificaciones.isChecked = notificationsEnabled // Si las notificaciones están habilitadas, el switch estará encendido
+        val reminderPosition = resources.getStringArray(R.array.tiempos_recordatorio).indexOf(reminderTime) // Obtenemos la posición del tiempo de recordatorio
+        spinnerTiempoRecordatorio.setSelection(reminderPosition) // Establecemos el tiempo de recordatorio en el spinner
+
+        switchNotificaciones.setOnCheckedChangeListener { _, isChecked ->
+            // Guardamos el estado del switch (habilitado/deshabilitado) en las preferencias
+            sharedPreferences.edit().putBoolean("notificationsEnabled", isChecked).apply()
+        }
+
+        var isFirstSelection = true
+        spinnerTiempoRecordatorio.setOnItemSelectedListener(object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>, view: android.view.View?, position: Int, id: Long) {
+                val selectedTime = parent.getItemAtPosition(position).toString()
+                sharedPreferences.edit().putString("reminderTime", selectedTime).apply()
+
+                /*
+                // (Opcional) Mostrar al usuario que se guardó
+                Toast.makeText(this@SettingsActivity, "Recordatorio ajustado a $selectedTime", Toast.LENGTH_SHORT).show()
+            }*/
+
+                if (!isFirstSelection) {
+                    Toast.makeText(this@SettingsActivity, "Recordatorio ajustado a $selectedTime", Toast.LENGTH_SHORT).show()
+                }
+                isFirstSelection = false
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {
+                // No hacer nada
+            }
+        })
     }
 }
