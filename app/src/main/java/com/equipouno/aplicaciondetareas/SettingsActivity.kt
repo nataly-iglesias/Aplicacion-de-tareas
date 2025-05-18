@@ -10,10 +10,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.json.JSONArray
-
 import android.content.SharedPreferences
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.widget.Switch
 import android.widget.Spinner
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat
+
+// Importaciones para el sonido
+import android.media.MediaPlayer
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -78,8 +84,10 @@ class SettingsActivity : AppCompatActivity() {
 
                 val  updatedJson = JSONArray(categories).toString()
                 prefs.edit().putString("categorias",  updatedJson).apply()
-                Toast.makeText(this, "Categoría agregada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Categoría agregada ✨!", Toast.LENGTH_SHORT).show()
             }
+            vibrate()
+            playCompleteTaskSound()
         }
 
         // Cargar nombre de usuario
@@ -90,7 +98,7 @@ class SettingsActivity : AppCompatActivity() {
             val userName = etUserName.text.toString().trim()
             if (userName.isNotEmpty()) {
                 prefs.edit().putString("nombre_usuario", userName).apply()
-                Toast.makeText(this, "Nombre guardado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Nombre guardado ✨!", Toast.LENGTH_SHORT).show()
 
                 // Ocultar el teclado
                 val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
@@ -98,6 +106,8 @@ class SettingsActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Ingresa un nombre válido", Toast.LENGTH_SHORT).show()
             }
+            vibrate()
+            playCompleteTaskSound()
         }
 
         // Configura el BottomNavigationView
@@ -125,7 +135,6 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-
         //Inicializamos las vistas
         switchNotificaciones = findViewById(R.id.switchNotificaciones)
         spinnerTiempoRecordatorio = findViewById(R.id.spinnerTiempoRecordatorio)
@@ -149,11 +158,6 @@ class SettingsActivity : AppCompatActivity() {
                 val selectedTime = parent.getItemAtPosition(position).toString()
                 sharedPreferences.edit().putString("reminderTime", selectedTime).apply()
 
-                /*
-                // (Opcional) Mostrar al usuario que se guardó
-                Toast.makeText(this@SettingsActivity, "Recordatorio ajustado a $selectedTime", Toast.LENGTH_SHORT).show()
-            }*/
-
                 if (!isFirstSelection) {
                     Toast.makeText(this@SettingsActivity, "Recordatorio ajustado a $selectedTime", Toast.LENGTH_SHORT).show()
                 }
@@ -164,5 +168,21 @@ class SettingsActivity : AppCompatActivity() {
                 // No hacer nada
             }
         })
+    }
+
+    // Función para vibrar el dispositivo
+    fun vibrate(){
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrator.vibrate(200)
+        }
+    }
+
+    //Función para reproducir sonido al completar una tarea
+    private fun playCompleteTaskSound() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.complete_task_sound)
+        mediaPlayer.start()
     }
 }

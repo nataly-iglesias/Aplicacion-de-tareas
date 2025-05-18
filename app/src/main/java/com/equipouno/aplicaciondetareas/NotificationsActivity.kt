@@ -48,6 +48,9 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import java.util.concurrent.TimeUnit
 import com.equipouno.aplicaciondetareas.tasks.MyWorker
 
+// Importaciones para el sonido
+import android.media.MediaPlayer
+
 data class Task2(
     val title: String,
     val deadline: String
@@ -90,7 +93,6 @@ class NotificationsActivity : AppCompatActivity() {
     val notificationsEnabled = sharedPreferences.getBoolean("notificationsEnabled", true)
     if (notificationsEnabled) {
 
-        statusTextView.text = "Notificaciones activas"
         val reminderTime = sharedPreferences.getString("reminderTime", "15 minutos") ?: "15 minutos"
         val Tiempo = parseReminderTime(reminderTime!!)
 
@@ -185,16 +187,35 @@ class NotificationsActivity : AppCompatActivity() {
         catAnimation.start()
 
         // Mensaje del gato
+        // Lista de mensajes aleatorios del gato
+        val mensajesGato = listOf(
+            "¡Miau! Revisa tus pendientes. 🐾",
+            "¡Hola! ¿Ya terminaste tus tareas?",
+            "Estoy vigilando tus pendientes... 🐱",
+            "¡Vamos! ¡A trabajar se ha dicho!",
+        )
+
+        // Seleccionar un mensaje aleatorio
+        val mensajeAleatorio = mensajesGato.random()
+
+        // Mostrarlo en el TextView
         val catMessage = findViewById<TextView>(R.id.catMessage)
-        catMessage.text = "¡Miau! Revisa tus pendientes. 🐾"
+        catMessage.text = mensajeAleatorio
         catMessage.visibility = View.VISIBLE
         catMessage.setBackgroundResource(R.drawable.bubble_background)
         catMessage.setTextColor(ContextCompat.getColor(this, android.R.color.black))
+        catMeow()
 
         // Ocultar el mensaje después de 3 segundos
         Handler(Looper.getMainLooper()).postDelayed({
             catMessage.visibility = View.GONE
         }, 3000)
+    }
+
+    //Función para reproducir sonido del gato
+    private fun catMeow() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.meow)
+        mediaPlayer.start()
     }
 
     private fun parseReminderTime(reminderTime: String): Long {
