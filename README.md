@@ -146,15 +146,15 @@ Puedes descargar la versión compilada de la aplicación desde el siguiente enla
 
 ## 📁 Estructura del repositorio
 
-├── .idea/ # Configuración del proyecto en Android Studio
-├── app/ # Código fuente de la aplicación Android 
-├── gradle/ # Configuración de Gradle
-├── LICENSE # Licencia MIT del proyecto
-├── README.md # Documentación general del proyecto
-├── build.gradle.kts # Script de compilación en Kotlin
-├── gradle.properties # Configuración de propiedades del sistema y del entorno de compilación para Gradle
-├── gradlew / gradlew.bat # Scripts para usar Gradle sin instalación local
-├── settings.gradle.kts # Configuración de módulos
+- .idea/ # Configuración del proyecto en Android Studio
+- app/ # Código fuente de la aplicación Android
+- gradle/ # Configuración de Gradle
+- LICENSE # Licencia MIT del proyecto
+- README.md # Documentación general del proyecto
+- build.gradle.kts # Script de compilación en Kotlin
+- gradle.properties # Configuración de propiedades del sistema y del entorno de compilación para Gradle
+- gradlew / gradlew.bat # Scripts para usar Gradle sin instalación local
+- settings.gradle.kts # Configuración de módulos
 
 ---
 
